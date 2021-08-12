@@ -157,7 +157,6 @@ const app = {
     audio.onplay = function () {
       _this.isPlaying = true;
       _this.setConfig('currentIndex',_this.currentIndex);
-      _this.setConfig('currentTime',_this.currentTime);
       player.classList.add("playing");
       cdThumbAnimate.play();
     };
@@ -271,6 +270,7 @@ const app = {
     }, 300);
   },
   loadCurrentSong: function () {
+    
     heading.textContent = this.currentSong.name;
     cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
     audio.src = this.currentSong.path;
@@ -282,8 +282,8 @@ const app = {
   loadConfig: function () {
     this.isRandom = this.config.isRandom;
     this.isRepeat = this.config.isRepeat;
-    this.currentIndex = this.config.currentIndex;
-    this.currentTime = this.config.currentTime;
+    this.currentIndex = this.config.currentIndex || this.currentIndex;
+    this.currentTime = this.config.currentTime || this.currentIndex;
   },
   nextSong: function () {
     this.currentIndex++;
@@ -306,8 +306,7 @@ const app = {
     } while (newIndex === this.currentIndex);
 
     this.currentIndex = newIndex;
-    this.loadCurrentS
-    ong();
+    this.loadCurrentSong();
   },
   start: function () {
     // Gán cấu hình từ config vào ứng dụng
@@ -334,6 +333,7 @@ const app = {
     randomBtn.classList.toggle("active", this.isRandom);
     repeatBtn.classList.toggle("active", this.isRepeat);
   }
+  
 };
 
 app.start();
