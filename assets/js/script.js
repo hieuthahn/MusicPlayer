@@ -115,15 +115,13 @@ const app = {
                     `;
     });
     playlist.innerHTML = htmls.join("");
+    // Xử lý lấy ra songs favourite đã lưu
+    // Handle get songs favourite saved
     const favouriteIcons = $$('.far')
-    // this.setConfig('listFavourites',this.listFavourites);
-    if (this.config.listFavourites) {
-        this.listFavourites = this.config.listFavourites || this.config.listFavourites;
-        this.config.listFavourites.forEach(element => {
-            favouriteIcons[element].classList.add('fas');
-        });
-    }
-    // console.log(favouriteIcons);
+    this.listFavourites = this.config.listFavourites || this.config.listFavourites;
+    this.config.listFavourites.forEach(element => {
+        favouriteIcons[element].classList.add('fas');
+    });
   },
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
@@ -266,33 +264,21 @@ const app = {
           audio.play();
         }
 
-        // Xử lý khi click vào song option
-        // Handle when clicking on the song option
       }
       if (optionNode) {
+        // Xử lý khi click vào songs favourite
+        // Handle when clicking on the songs favourite
         const optionNodeIcon = e.target.closest(".option").childNodes[1];
-        // if (_this.config.listFavourites) {
-        //     if (_this.config.listFavourites.includes(optionNode.parentNode.dataset.index)) {
-        //         const index = _this.config.listFavourites.indexOf(optionNode.parentNode.dataset.index);
-        //         _this.config.listFavourites.splice(index,1);
-        //         optionNodeIcon.classList.remove('fas');
-        //     } else {
-        //         _this.config.listFavourites.push(optionNode.parentNode.dataset.index);
-        //         optionNodeIcon.classList.add('fas');
-        //     }
-        // }
-        // else {
-            if (_this.listFavourites.includes(optionNode.parentNode.dataset.index)) {
-                const index = _this.listFavourites.indexOf(optionNode.parentNode.dataset.index);
-                _this.listFavourites.splice(index,1);
-                optionNodeIcon.classList.remove('fas');
-            } else {
-                _this.listFavourites.push(optionNode.parentNode.dataset.index);
-                optionNodeIcon.classList.add('fas');
-            }
-            _this.setConfig('listFavourites',_this.listFavourites);
-            console.log(_this.listFavourites)
-        // }
+
+        if (_this.listFavourites.includes(optionNode.parentNode.dataset.index)) {
+            const index = _this.listFavourites.indexOf(optionNode.parentNode.dataset.index);
+            _this.listFavourites.splice(index,1);
+            optionNodeIcon.classList.remove('fas');
+        } else {
+            _this.listFavourites.push(optionNode.parentNode.dataset.index);
+            optionNodeIcon.classList.add('fas');
+        }
+        _this.setConfig('listFavourites',_this.listFavourites);
       }
     };
   },
@@ -314,12 +300,10 @@ const app = {
 
   },
   loadConfig: function () {
-    this.isRandom = this.config.isRandom;
-    this.isRepeat = this.config.isRepeat;
+    this.isRandom = this.config.isRandom || this.isRandom;
+    this.isRepeat = this.config.isRepeat || this.isRepeat;
     this.currentIndex = this.config.currentIndex || this.currentIndex;
-    this.currentTime = this.config.currentTime || this.currentIndex;
-    // console.log(this.config.listFavourites, playlist.lastElementChild());
-    
+
   },
   nextSong: function () {
     this.currentIndex++;
@@ -372,5 +356,5 @@ const app = {
   }
   
 };
-
+console.log(app.isRandom, app.isRepeat)
 app.start();
