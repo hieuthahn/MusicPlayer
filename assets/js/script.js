@@ -14,7 +14,8 @@ const prevBtn = $(".btn-prev");
 const nextBtn = $(".btn-next");
 const randomBtn = $(".btn-random");
 const repeatBtn = $(".btn-repeat");
-const playlist = $(".playlist");
+const playlist = $(".playlist"); 
+
 
 const app = {
   currentIndex: 0,
@@ -22,6 +23,8 @@ const app = {
   isPlaying: false,
   isRandom: false,
   isRepeat: false,
+  isLike: false,
+  listFavourites: [],
   config: {},
   // (1/2) Uncomment the line below to use localStorage
   config: JSON.parse(localStorage.getItem(PlAYER_STORAGE_KEY)) || {},
@@ -106,12 +109,17 @@ const app = {
                                 <p class="author">${song.singer}</p>
                             </div>
                             <div class="option">
-                                <i class="fas fa-ellipsis-h"></i>
+                                <i class="far fa-heart"></i>
                             </div>
                         </div>
                     `;
     });
     playlist.innerHTML = htmls.join("");
+    const favouriteIcons = $$('.far')
+    this.config.listFavourites.forEach(element => {
+        favouriteIcons[element].classList.add('fas');
+    });
+    console.log(favouriteIcons);
   },
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
@@ -243,8 +251,8 @@ const app = {
     // Listen to playlist clicks
     playlist.onclick = function (e) {
       const songNode = e.target.closest(".song:not(.active)");
-
-      if (songNode || e.target.closest(".option")) {
+      const optionNode =   e.target.closest(".option");
+      if (songNode && !optionNode) {
         // Xử lý khi click vào song
         // Handle when clicking on the song
         if (songNode) {
@@ -256,8 +264,18 @@ const app = {
 
         // Xử lý khi click vào song option
         // Handle when clicking on the song option
-        if (e.target.closest(".option")) {
+      }
+      if (optionNode) {
+        const optionNodeIcon = e.target.closest(".option").childNodes[1];
+        if (_this.config.listFavourites.includes(optionNode.parentNode.dataset.index)) {
+            const index = _this.config.listFavourites.indexOf(optionNode.parentNode.dataset.index);
+            _this.config.listFavourites.splice(index,1);
+            optionNodeIcon.classList.remove('fas');
+        } else {
+            _this.config.listFavourites.push(optionNode.parentNode.dataset.index);
+            optionNodeIcon.classList.add('fas');
         }
+        _this.setConfig('listFavourites',_this.config.listFavourites);
       }
     };
   },
@@ -270,7 +288,6 @@ const app = {
     }, 300);
   },
   loadCurrentSong: function () {
-    
     heading.textContent = this.currentSong.name;
     cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`;
     audio.src = this.currentSong.path;
@@ -284,6 +301,8 @@ const app = {
     this.isRepeat = this.config.isRepeat;
     this.currentIndex = this.config.currentIndex || this.currentIndex;
     this.currentTime = this.config.currentTime || this.currentIndex;
+    // console.log(this.config.listFavourites, playlist.lastElementChild());
+    
   },
   nextSong: function () {
     this.currentIndex++;
@@ -332,6 +351,7 @@ const app = {
     // Display the initial state of the repeat & random button
     randomBtn.classList.toggle("active", this.isRandom);
     repeatBtn.classList.toggle("active", this.isRepeat);
+    
   }
   
 };
