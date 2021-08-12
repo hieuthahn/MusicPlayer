@@ -116,10 +116,14 @@ const app = {
     });
     playlist.innerHTML = htmls.join("");
     const favouriteIcons = $$('.far')
-    this.config.listFavourites.forEach(element => {
-        favouriteIcons[element].classList.add('fas');
-    });
-    console.log(favouriteIcons);
+    // this.setConfig('listFavourites',this.listFavourites);
+    if (this.config.listFavourites) {
+        this.listFavourites = this.config.listFavourites || this.config.listFavourites;
+        this.config.listFavourites.forEach(element => {
+            favouriteIcons[element].classList.add('fas');
+        });
+    }
+    // console.log(favouriteIcons);
   },
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
@@ -267,15 +271,28 @@ const app = {
       }
       if (optionNode) {
         const optionNodeIcon = e.target.closest(".option").childNodes[1];
-        if (_this.config.listFavourites.includes(optionNode.parentNode.dataset.index)) {
-            const index = _this.config.listFavourites.indexOf(optionNode.parentNode.dataset.index);
-            _this.config.listFavourites.splice(index,1);
-            optionNodeIcon.classList.remove('fas');
-        } else {
-            _this.config.listFavourites.push(optionNode.parentNode.dataset.index);
-            optionNodeIcon.classList.add('fas');
-        }
-        _this.setConfig('listFavourites',_this.config.listFavourites);
+        // if (_this.config.listFavourites) {
+        //     if (_this.config.listFavourites.includes(optionNode.parentNode.dataset.index)) {
+        //         const index = _this.config.listFavourites.indexOf(optionNode.parentNode.dataset.index);
+        //         _this.config.listFavourites.splice(index,1);
+        //         optionNodeIcon.classList.remove('fas');
+        //     } else {
+        //         _this.config.listFavourites.push(optionNode.parentNode.dataset.index);
+        //         optionNodeIcon.classList.add('fas');
+        //     }
+        // }
+        // else {
+            if (_this.listFavourites.includes(optionNode.parentNode.dataset.index)) {
+                const index = _this.listFavourites.indexOf(optionNode.parentNode.dataset.index);
+                _this.listFavourites.splice(index,1);
+                optionNodeIcon.classList.remove('fas');
+            } else {
+                _this.listFavourites.push(optionNode.parentNode.dataset.index);
+                optionNodeIcon.classList.add('fas');
+            }
+            _this.setConfig('listFavourites',_this.listFavourites);
+            console.log(_this.listFavourites)
+        // }
       }
     };
   },
