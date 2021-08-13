@@ -118,7 +118,7 @@ const app = {
     // Xử lý lấy ra songs favourite đã lưu
     // Handle get songs favourite saved
     const favouriteIcons = $$('.far')
-    this.listFavourites = this.config.listFavourites || this.config.listFavourites;
+    this.listFavourites = this.config.listFavourites || this.listFavourites;
     this.config.listFavourites.forEach(element => {
         favouriteIcons[element].classList.add('fas');
     });
@@ -356,5 +356,5 @@ const app = {
   }
   
 };
-console.log(app.isRandom, app.isRepeat)
+
 app.start();
