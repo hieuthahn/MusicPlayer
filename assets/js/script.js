@@ -15,7 +15,8 @@ const nextBtn = $(".btn-next");
 const randomBtn = $(".btn-random");
 const repeatBtn = $(".btn-repeat");
 const playlist = $(".playlist"); 
-
+const volumeSlider = $(".volume-slider");
+const volume = $(".volume")
 
 const app = {
   currentIndex: 0,
@@ -24,6 +25,8 @@ const app = {
   isRandom: false,
   isRepeat: false,
   isLike: false,
+  isMute: false,
+  audioVolume: 0,
   listFavourites: [],
   config: {},
   // (1/2) Uncomment the line below to use localStorage
@@ -281,6 +284,55 @@ const app = {
         _this.setConfig('listFavourites',_this.listFavourites);
       }
     };
+
+    // Xử lý tăng giảm âm lương
+    // Handle volume up down
+    volumeSlider.oninput = function(e) {
+      if (e.target.value == 0) {
+        _this.audioVolume = e.target.value;
+        audio.volume = _this.audioVolume;
+        _this.isMute = !_this.isMute;
+        volume.classList.toggle("is-mute",_this.isMute);
+        _this.setConfig('isMute',_this.isMute);
+      } else {
+        _this.audioVolume = e.target.value;
+        audio.volume = _this.audioVolume;
+        _this.isMute = false;
+        volume.classList.toggle("is-mute",_this.isMute);
+      }
+      _this.setConfig('volume',_this.audioVolume);
+    }
+
+    volumeSlider.onchange = function(e) {
+
+    }
+
+    volume.onclick = function (e) {
+      const iconVolume = e.target.closest(".fas");
+      console.log(_this.audioVolume);
+
+      if (iconVolume && !_this.isMute) {
+        // _this.audioVolume = 0;
+        audio.volume = 0;
+        volumeSlider.value = 0;
+        _this.isMute = !_this.isMute;
+        volume.classList.toggle("is-mute",_this.isMute);
+      } else if (iconVolume && _this.isMute) {
+        _this.audioVolume = _this.config.volume;
+        audio.volume = _this.audioVolume;
+        volumeSlider.value = _this.audioVolume;
+        _this.isMute = !_this.isMute;
+        volume.classList.toggle("is-mute",_this.isMute);
+      }
+      _this.setConfig('isMute',_this.isMute);
+      _this.setConfig('volume',_this.audioVolume);
+
+      // if (!_this.isMute) {
+      //   audio.volume = _this.config.volume;
+      //   volumeSlider.value = _this.config.volume;
+      //   _this.setConfig('isMute',_this.isMute);
+      // }
+    }
   },
   scrollToActiveSong: function () {
     setTimeout(() => {
@@ -303,6 +355,9 @@ const app = {
     this.isRandom = this.config.isRandom || this.isRandom;
     this.isRepeat = this.config.isRepeat || this.isRepeat;
     this.currentIndex = this.config.currentIndex || this.currentIndex;
+    this.audioVolume = this.config.volume || this.audioVolume; 
+    this.isMute = this.config.isMute || this.isMute;
+    volumeSlider.value = this.config.volume || this.audioVolume;
 
   },
   nextSong: function () {
@@ -352,7 +407,12 @@ const app = {
     // Display the initial state of the repeat & random button
     randomBtn.classList.toggle("active", this.isRandom);
     repeatBtn.classList.toggle("active", this.isRepeat);
-    
+    if (this.config.isMute) {
+      this.isMute = true;
+      volume.classList.toggle("is-mute", this.isMute);
+      volumeSlider.value = 0;
+      audio.volume = 0;
+    }
   }
   
 };
