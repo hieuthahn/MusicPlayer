@@ -329,12 +329,6 @@ const app = {
           _this.setConfig('volume', _this.audioVolume);
 
       }
-      console.log(Boolean(_this.isMute), _this.audioVolume, volumeSlider.value);
-      console.log(Boolean(_this.config.isMute), _this.config.volume, volumeSlider.value);
-
-
-      
-
     }
   },
   scrollToActiveSong: function () {
