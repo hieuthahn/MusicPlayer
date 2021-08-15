@@ -26,7 +26,7 @@ const app = {
   isRepeat: false,
   isLike: false,
   isMute: false,
-  audioVolume: 0,
+  audioVolume: 0.5,
   listFavourites: [],
   config: {},
   // (1/2) Uncomment the line below to use localStorage
@@ -122,9 +122,11 @@ const app = {
     // Handle get songs favourite saved
     const favouriteIcons = $$('.far')
     this.listFavourites = this.config.listFavourites || this.listFavourites;
-    this.config.listFavourites.forEach(element => {
-        favouriteIcons[element].classList.add('fas');
-    });
+    if (this.listFavourites) {
+      this.listFavourites.forEach(element => {
+          favouriteIcons[element].classList.add('fas');
+      });
+    }
   },
   defineProperties: function () {
     Object.defineProperty(this, "currentSong", {
@@ -293,7 +295,6 @@ const app = {
         audio.volume = _this.audioVolume;
         _this.isMute = !_this.isMute;
         volume.classList.toggle("is-mute",_this.isMute);
-        _this.setConfig('isMute',_this.isMute);
       } else {
         _this.audioVolume = e.target.value;
         audio.volume = _this.audioVolume;
@@ -301,6 +302,7 @@ const app = {
         volume.classList.toggle("is-mute",_this.isMute);
       }
       _this.setConfig('volume',_this.audioVolume);
+      _this.setConfig('isMute',_this.isMute);
     }
 
     volumeSlider.onchange = function(e) {
@@ -309,29 +311,30 @@ const app = {
 
     volume.onclick = function (e) {
       const iconVolume = e.target.closest(".fas");
-      console.log(_this.audioVolume);
-
       if (iconVolume && !_this.isMute) {
-        // _this.audioVolume = 0;
-        audio.volume = 0;
-        volumeSlider.value = 0;
-        _this.isMute = !_this.isMute;
-        volume.classList.toggle("is-mute",_this.isMute);
-      } else if (iconVolume && _this.isMute) {
-        _this.audioVolume = _this.config.volume;
-        audio.volume = _this.audioVolume;
-        volumeSlider.value = _this.audioVolume;
-        _this.isMute = !_this.isMute;
-        volume.classList.toggle("is-mute",_this.isMute);
+          _this.audioVolume = _this.config.volume || 0.5;
+          audio.volume = 0;
+          volumeSlider.value = 0;
+          _this.isMute = !_this.isMute;
+          volume.classList.toggle("is-mute",_this.isMute);
+          _this.setConfig('isMute',_this.isMute);
+          _this.setConfig('volume', volumeSlider.value);
       }
-      _this.setConfig('isMute',_this.isMute);
-      _this.setConfig('volume',_this.audioVolume);
+      else if (iconVolume && _this.isMute) {
+          audio.volume = _this.audioVolume;
+          volumeSlider.value = _this.audioVolume;
+          _this.isMute = !_this.isMute;
+          volume.classList.toggle("is-mute",_this.isMute);
+          _this.setConfig('isMute',_this.isMute);
+          _this.setConfig('volume', _this.audioVolume);
 
-      // if (!_this.isMute) {
-      //   audio.volume = _this.config.volume;
-      //   volumeSlider.value = _this.config.volume;
-      //   _this.setConfig('isMute',_this.isMute);
-      // }
+      }
+      console.log(Boolean(_this.isMute), _this.audioVolume, volumeSlider.value);
+      console.log(Boolean(_this.config.isMute), _this.config.volume, volumeSlider.value);
+
+
+      
+
     }
   },
   scrollToActiveSong: function () {
@@ -357,8 +360,7 @@ const app = {
     this.currentIndex = this.config.currentIndex || this.currentIndex;
     this.audioVolume = this.config.volume || this.audioVolume; 
     this.isMute = this.config.isMute || this.isMute;
-    volumeSlider.value = this.config.volume || this.audioVolume;
-
+    volumeSlider.value = this.config.volume;
   },
   nextSong: function () {
     this.currentIndex++;
@@ -407,12 +409,12 @@ const app = {
     // Display the initial state of the repeat & random button
     randomBtn.classList.toggle("active", this.isRandom);
     repeatBtn.classList.toggle("active", this.isRepeat);
-    if (this.config.isMute) {
-      this.isMute = true;
-      volume.classList.toggle("is-mute", this.isMute);
-      volumeSlider.value = 0;
-      audio.volume = 0;
-    }
+    volume.classList.toggle("is-mute",Boolean(this.isMute));
+    // if (this.config.isMute && this.config.volume == 0) {
+    //   this.isMute = true;
+    //   volumeSlider.value = 0;
+    //   audio.volume = 0;
+    // }
   }
   
 };
