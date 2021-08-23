@@ -305,10 +305,6 @@ const app = {
       _this.setConfig('isMute',_this.isMute);
     }
 
-    volumeSlider.onchange = function(e) {
-
-    }
-
     volume.onclick = function (e) {
       const iconVolume = e.target.closest(".fas");
       if (iconVolume && !_this.isMute) {
@@ -354,7 +350,8 @@ const app = {
     this.currentIndex = this.config.currentIndex || this.currentIndex;
     this.audioVolume = this.config.volume || this.audioVolume; 
     this.isMute = this.config.isMute || this.isMute;
-    volumeSlider.value = this.config.volume;
+    volumeSlider.value = this.config.volume || this.audioVolume;
+    audio.volume = this.config.volume || this.audioVolume;
   },
   nextSong: function () {
     this.currentIndex++;
@@ -404,11 +401,6 @@ const app = {
     randomBtn.classList.toggle("active", this.isRandom);
     repeatBtn.classList.toggle("active", this.isRepeat);
     volume.classList.toggle("is-mute",Boolean(this.isMute));
-    // if (this.config.isMute && this.config.volume == 0) {
-    //   this.isMute = true;
-    //   volumeSlider.value = 0;
-    //   audio.volume = 0;
-    // }
   }
   
 };
